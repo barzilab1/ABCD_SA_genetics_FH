@@ -44,6 +44,7 @@ site$site_id_l[site$src_subject_id == "NDAR_INVY92TEZW6" & site$eventname == "ba
 
 site$site_id_l_br = sub("site","",site$site_id_l)
 site[,c("sched_delay", "site_id_l")] = NULL
+site = site[site$eventname %in% c("baseline_year_1_arm_1","1_year_follow_up_y_arm_1", "2_year_follow_up_y_arm_1" ),]
 
 write.csv(file = "outputs/site.csv",x = site, row.names = F, na = "")
 

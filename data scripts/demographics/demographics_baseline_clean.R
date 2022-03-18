@@ -24,7 +24,7 @@ demographics_set[,demo_sex_v2 := NULL]
 ########### age
 #interview age will be used instead of age
 demographics_set[,demo_brthdat_v2:=NULL] 
-demographics_set[, age := interview_age]
+demographics_set[, age_baseline := interview_age]
 
 ########### gender
 demographics_set[,gender := demo_gender_id_v2]
@@ -151,7 +151,7 @@ demographics_set[demo_roster_v2 %in% c(60,77), demo_roster_v2:= NA]
 selected_features = c("src_subject_id", "sex",
                       "race_white", "race_black", "race_aian", "race_nhpi", "race_asian", "race_other","race_mixed" ,"ethnicity_hisp",
                       "non_hispanic_black", "non_hispanic_white",
-                      "born_in_usa", "sex_br")
+                      "born_in_usa", "sex_br", "age_baseline")
 
 write.csv(file = "outputs/demographics_baseline.csv",x = demographics_set[,.SD,.SDcols = selected_features], row.names=F, na = "")
 
