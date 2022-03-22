@@ -86,11 +86,10 @@ round(r2_nagelkerke(mod_prs_0_0001), digits = 3) *100
 # main analysis
 #####################################
 
-# suicide_PRSice_Pt0_01
 mod_f_e0 = glm(SA_y_ever ~ age_2_year + sex_br + race_black , data = dataset, family = binomial)
-mod_f_e1 = glm(SA_y_ever ~ age_2_year + sex_br + race_black + suicide_PRSice_Pt0_01, data = dataset, family = binomial)
-mod_f_e2 = glm(SA_y_ever ~ age_2_year + sex_br + race_black + famhx_ss_momdad_scd_p, data = dataset, family = binomial)
-mod_f_e3 = glm(SA_y_ever ~ age_2_year + sex_br + race_black + famhx_ss_momdad_scd_p + suicide_PRSice_Pt0_01, data = dataset, family = binomial)
+mod_f_e1 = glm(SA_y_ever ~ age_2_year + sex_br + race_black + suicide_PRSice_Pt0_05, data = dataset, family = binomial)
+mod_f_e2= glm(SA_y_ever ~ age_2_year + sex_br + race_black + famhx_ss_momdad_scd_p, data = dataset, family = binomial)
+mod_f_e3 = glm(SA_y_ever ~ age_2_year + sex_br + race_black + famhx_ss_momdad_scd_p + suicide_PRSice_Pt0_05, data = dataset, family = binomial)
 
 
 tab_model(mod_f_e0,mod_f_e1,mod_f_e2, mod_f_e3, show.intercept = F)
@@ -103,24 +102,6 @@ round(r2_nagelkerke(mod_f_e3), digits = 3) *100
 anova(mod_f_e0, mod_f_e1,test="Chisq")
 anova(mod_f_e0, mod_f_e2,test="Chisq")
 anova(mod_f_e2, mod_f_e3,test="Chisq")
-
-
-
-# suicide_PRSice_Pt0_05
-mod_f_e1_5 = glm(SA_y_ever ~ age_2_year + sex_br + race_black + suicide_PRSice_Pt0_05, data = dataset, family = binomial)
-mod_f_e3_5 = glm(SA_y_ever ~ age_2_year + sex_br + race_black + famhx_ss_momdad_scd_p + suicide_PRSice_Pt0_05, data = dataset, family = binomial)
-
-
-tab_model(mod_f_e0,mod_f_e1_5,mod_f_e2, mod_f_e3_5, show.intercept = F )
-round(r2_nagelkerke(mod_f_e0), digits = 3) *100
-round(r2_nagelkerke(mod_f_e1_5), digits = 3) *100
-round(r2_nagelkerke(mod_f_e2), digits = 3) *100
-round(r2_nagelkerke(mod_f_e3_5), digits = 3) *100
-
-
-anova(mod_f_e0, mod_f_e1_5,test="Chisq")
-anova(mod_f_e0, mod_f_e2,test="Chisq")
-anova(mod_f_e2, mod_f_e3_5,test="Chisq")
 
 
 
@@ -192,16 +173,11 @@ run_models <- function(DV ,IV = NULL, covar = NULL) {
   
 }
 
-########### ever prs 0.01 ########### 
 mod_e0 = run_models("SA_y_ever")
-mod_e1 = run_models("SA_y_ever", IV = "suicide_PRSice_Pt0_01")
-mod_e2 = run_models("SA_y_ever", IV = "famhx_ss_momdad_scd_p")
-mod_e3 = run_models("SA_y_ever", IV = "suicide_PRSice_Pt0_01", covar = "famhx_ss_momdad_scd_p")
-
-
-########### ever prs 0.05 ########### 
 mod_e1 = run_models("SA_y_ever", IV = "suicide_PRSice_Pt0_05")
+mod_e2 = run_models("SA_y_ever", IV = "famhx_ss_momdad_scd_p")
 mod_e3 = run_models("SA_y_ever", IV = "suicide_PRSice_Pt0_05", covar = "famhx_ss_momdad_scd_p")
+
 
 
 
