@@ -88,7 +88,7 @@ round(r2_nagelkerke(mod_prs_0_0001), digits = 3) *100
 
 mod_f_e0 = glm(SA_y_ever ~ age_2_year + sex_br + race_black , data = dataset, family = binomial)
 mod_f_e1 = glm(SA_y_ever ~ age_2_year + sex_br + race_black + suicide_PRSice_Pt0_05, data = dataset, family = binomial)
-mod_f_e2= glm(SA_y_ever ~ age_2_year + sex_br + race_black + famhx_ss_momdad_scd_p, data = dataset, family = binomial)
+mod_f_e2 = glm(SA_y_ever ~ age_2_year + sex_br + race_black + famhx_ss_momdad_scd_p, data = dataset, family = binomial)
 mod_f_e3 = glm(SA_y_ever ~ age_2_year + sex_br + race_black + famhx_ss_momdad_scd_p + suicide_PRSice_Pt0_05, data = dataset, family = binomial)
 
 
