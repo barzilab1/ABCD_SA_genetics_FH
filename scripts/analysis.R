@@ -141,8 +141,8 @@ run_models <- function(DV ,IV = NULL, covar = NULL) {
   
   dataset_ = dataset
   
-  modEUR = glm(formula, data = dataset_[dataset_$race_black == 0,], family = binomial)
-  modAFR = glm(formula, data = dataset_[dataset_$race_black == 1,], family = binomial)
+  modEUR = glm(formula, data = dataset_[dataset_$genetic_afr == 0,], family = binomial)
+  modAFR = glm(formula, data = dataset_[dataset_$genetic_afr == 1,], family = binomial)
   
   print(tab_model(modEUR,modAFR, show.intercept = F ))
   cat("\nr2 EUR: ")
