@@ -37,14 +37,6 @@ t.test(suicide_PRSice_Pt0_05 ~ SA_y_ever, dataset)
 write.csv(as.data.frame(table1_print), "tables/table1.csv",na = "" )
 
 
-# table 1 for SA frequencies
-SA_variables = c("SA_y_ever", "SA_y_2_year", "SA_y_1_year", "SA_y_baseline_year")
-table1_SA = CreateTableOne(data =dataset, vars = SA_variables ,factorVars = SA_variables,  strata = "race_black", addOverall = T)
-table1_SA_print = print(table1_SA, quote = FALSE, noSpaces = TRUE, printToggle = FALSE, missing = T)
-table1_SA_print
-
-write.csv(as.data.frame(table1_SA_print), "tables/table1_SA.csv",na = "" )
-
 
 
 # table 1 for race X gen ancestry 
@@ -173,16 +165,34 @@ run_models <- function(DV ,IV = NULL, covar = NULL) {
   
 }
 
+
+
+#####################################################
+# Supplemental Table 3- Ancestry stratified analyses
+#####################################################
 mod_e0 = run_models("SA_y_ever")
 mod_e1 = run_models("SA_y_ever", IV = "suicide_PRSice_Pt0_05")
 mod_e2 = run_models("SA_y_ever", IV = "famhx_ss_momdad_scd_p")
 mod_e3 = run_models("SA_y_ever", IV = "suicide_PRSice_Pt0_05", covar = "famhx_ss_momdad_scd_p")
 
 
+######################################################
+# Supplemental Table 2 - Frequency of suicide attempts 
+# in each of the first three ABCD Study evaluations.
+######################################################
+
+SA_variables = c("SA_y_ever", "SA_y_2_year", "SA_y_1_year", "SA_y_baseline_year")
+table1_SA = CreateTableOne(data =dataset, vars = SA_variables ,factorVars = SA_variables,  strata = "race_black", addOverall = T)
+table1_SA_print = print(table1_SA, quote = FALSE, noSpaces = TRUE, printToggle = FALSE, missing = T)
+table1_SA_print
+
+write.csv(as.data.frame(table1_SA_print), "tables/table1_SA.csv",na = "" )
 
 
-
-
+setDT(dataset)
+dataset[,table(SA_y_baseline_year,SA_y_1_year, useNA = "ifany")]
+dataset[,table(SA_y_baseline_year,SA_y_2_year, useNA = "ifany")]
+dataset[,table(SA_y_1_year,SA_y_2_year, useNA = "ifany")]
 
 
 
