@@ -47,68 +47,11 @@ table1_race_print
 
 write.csv(as.data.frame(table1_race_print), "tables/table1_race.csv",na = "" )
 
-#####################################
-# check best PRSics
-#####################################
 
-mod_prs_1 =      glm(SA_y_ever ~ age_2_year + sex_br + race_black + suicide_PRSice_Pt1, data = dataset, family = binomial)
-mod_prs_0_5 =    glm(SA_y_ever ~ age_2_year + sex_br + race_black + suicide_PRSice_Pt0_5, data = dataset, family = binomial)
-mod_prs_0_3 =    glm(SA_y_ever ~ age_2_year + sex_br + race_black + suicide_PRSice_Pt0_3, data = dataset, family = binomial)
-mod_prs_0_1 =    glm(SA_y_ever ~ age_2_year + sex_br + race_black + suicide_PRSice_Pt0_1, data = dataset, family = binomial)
-mod_prs_0_05 =   glm(SA_y_ever ~ age_2_year + sex_br + race_black + suicide_PRSice_Pt0_05, data = dataset, family = binomial)
-mod_prs_0_01 =   glm(SA_y_ever ~ age_2_year + sex_br + race_black + suicide_PRSice_Pt0_01, data = dataset, family = binomial)
-mod_prs_0_001 =  glm(SA_y_ever ~ age_2_year + sex_br + race_black + suicide_PRSice_Pt0_001, data = dataset, family = binomial)
-mod_prs_0_0001 = glm(SA_y_ever ~ age_2_year + sex_br + race_black + suicide_PRSice_Pt0_0001, data = dataset, family = binomial)
-
-
-
-tab_model(mod_prs_1,mod_prs_0_5,mod_prs_0_3,mod_prs_0_1,mod_prs_0_05,mod_prs_0_01 ,mod_prs_0_001,mod_prs_0_0001, show.intercept = F )
-round(r2_nagelkerke(mod_prs_1), digits = 3) *100
-round(r2_nagelkerke(mod_prs_0_5), digits = 3) *100
-round(r2_nagelkerke(mod_prs_0_3), digits = 3) *100
-round(r2_nagelkerke(mod_prs_0_1), digits = 3) *100
-round(r2_nagelkerke(mod_prs_0_05), digits = 3) *100
-round(r2_nagelkerke(mod_prs_0_01), digits = 3) *100
-round(r2_nagelkerke(mod_prs_0_001), digits = 3) *100
-round(r2_nagelkerke(mod_prs_0_0001), digits = 3) *100
-
-
-
-#####################################
-# main analysis
-#####################################
-
-mod_f_e0 = glm(SA_y_ever ~ age_2_year + sex_br + race_black , data = dataset, family = binomial)
-mod_f_e1 = glm(SA_y_ever ~ age_2_year + sex_br + race_black + suicide_PRSice_Pt0_05, data = dataset, family = binomial)
-mod_f_e2 = glm(SA_y_ever ~ age_2_year + sex_br + race_black + famhx_ss_momdad_scd_p, data = dataset, family = binomial)
-mod_f_e3 = glm(SA_y_ever ~ age_2_year + sex_br + race_black + famhx_ss_momdad_scd_p + suicide_PRSice_Pt0_05, data = dataset, family = binomial)
-
-
-tab_model(mod_f_e0,mod_f_e1,mod_f_e2, mod_f_e3, show.intercept = F)
-round(r2_nagelkerke(mod_f_e0), digits = 3) *100
-round(r2_nagelkerke(mod_f_e1), digits = 3) *100
-round(r2_nagelkerke(mod_f_e2), digits = 3) *100
-round(r2_nagelkerke(mod_f_e3), digits = 3) *100
-
-
-anova(mod_f_e0, mod_f_e1,test="Chisq")
-anova(mod_f_e0, mod_f_e2,test="Chisq")
-anova(mod_f_e2, mod_f_e3,test="Chisq")
-
-
-
-
-
-
-#####################################
-# Supplementary 
-#####################################
 
 #####################################
 # help functions
 #####################################
-
-
 create_meta_df <- function (feature, model1, model2) {
   mod1_coef = summary(model1)$coef
   mod2_coef = summary(model2)$coef
@@ -122,7 +65,8 @@ create_meta_df <- function (feature, model1, model2) {
 
 run_meta_analysis <- function(IV, modEUR, modAFR){
   df = create_meta_df(IV, modEUR, modAFR)
-  metagen(TE, seTE, studlab = c("EUR", "AFR"),  data = df, sm = "OR")
+  met = metagen(TE, seTE, studlab = c("EUR", "AFR"),  data = df, sm = "OR")
+  met
 }
 
 
@@ -150,49 +94,94 @@ run_models <- function(DV ,IV = NULL, covar = NULL) {
   cat("\nr2 AFR: ")
   print(round(r2_nagelkerke(modAFR), digits = 3) *100)
   
+  cat("\n\n meta analysis for sex:\n\n")
+  print(run_meta_analysis("sex_br", modEUR, modAFR))
+  cat("\n\n meta analysis for age:\n\n")
+  print(run_meta_analysis("age_2_year", modEUR, modAFR))
   
-  if(is.null(IV)){
-    cat("\n\n meta analysis for sex:\n")
-    print(run_meta_analysis("sex_br", modEUR, modAFR))
-    cat("\n\n meta analysis for age:\n")
-    print(run_meta_analysis("age_2_year", modEUR, modAFR))
-  }else{
-    cat("\n\n meta analysis for", IV, ":\n")
+  if(!is.null(IV)){
+    cat("\n\n meta analysis for", IV, ":\n\n")
     print(run_meta_analysis(IV, modEUR, modAFR))
   }
+  
+  if(!is.null(covar)){
+    cat("\n\n meta analysis for", covar, ":\n\n")
+    print(run_meta_analysis(covar, modEUR, modAFR))
+  }
+  
+  
   
   return(list(modEUR =modEUR, modAFR = modAFR))
   
 }
 
 
+#####################################
+# check best PRSics 
+# Supplemental Table 2
+#####################################
+mod_prs_p1 = run_models("SA_y_ever", IV = "suicide_PRSice_Pt1")
+mod_prs_p0_5 = run_models("SA_y_ever", IV = "suicide_PRSice_Pt0_5")
+mod_prs_p0_3 = run_models("SA_y_ever", IV = "suicide_PRSice_Pt0_3")
+mod_prs_p0_1 = run_models("SA_y_ever", IV = "suicide_PRSice_Pt0_1")
+mod_prs_p0_05 = run_models("SA_y_ever", IV = "suicide_PRSice_Pt0_05")
+mod_prs_p0_01 = run_models("SA_y_ever", IV = "suicide_PRSice_Pt0_01")
+mod_prs_p0_001 = run_models("SA_y_ever", IV = "suicide_PRSice_Pt0_001")
+mod_prs_p0_0001 = run_models("SA_y_ever", IV = "suicide_PRSice_Pt0_0001")
 
-#####################################################
-# Supplemental Table 3- Ancestry stratified analyses
-#####################################################
-mod_e0 = run_models("SA_y_ever")
-mod_e1 = run_models("SA_y_ever", IV = "suicide_PRSice_Pt0_05")
-mod_e2 = run_models("SA_y_ever", IV = "famhx_ss_momdad_scd_p")
-mod_e3 = run_models("SA_y_ever", IV = "suicide_PRSice_Pt0_05", covar = "famhx_ss_momdad_scd_p")
+
+
+##########################################################################
+# Table 2: Association of suicide attempt PRS, parental history of suicide 
+# attempt/death and suicide attempt in the meta-analyzed study population
+##########################################################################
+mod_meta_1 = run_models("SA_y_ever")
+mod_meta_2 = run_models("SA_y_ever", IV = "suicide_PRSice_Pt0_05")
+mod_meta_3 = run_models("SA_y_ever", IV = "famhx_ss_momdad_scd_p")
+mod_meta_4 = run_models("SA_y_ever", IV = "suicide_PRSice_Pt0_05", covar = "famhx_ss_momdad_scd_p")
+
+
+
+##########################################################################
+# Table 3: 
+##########################################################################
+#EUR
+anova(mod_meta_1$modEUR, mod_meta_2$modEUR,test="Chisq")
+anova(mod_meta_1$modEUR, mod_meta_3$modEUR,test="Chisq")
+anova(mod_meta_3$modEUR, mod_meta_4$modEUR,test="Chisq")
+
+#AFR
+anova(mod_meta_1$modAFR, mod_meta_2$modAFR,test="Chisq")
+anova(mod_meta_1$modAFR, mod_meta_3$modAFR,test="Chisq")
+anova(mod_meta_3$modAFR, mod_meta_4$modAFR,test="Chisq")
+
 
 
 ######################################################
-# Supplemental Table 2 - Frequency of suicide attempts 
-# in each of the first three ABCD Study evaluations.
+# Figure 1: Polygenic risk score for suicide attempt 
+# (PRS-SA) and suicide attempt in Black and White youth.
 ######################################################
+library(ggplot2)
 
-SA_variables = c("SA_y_ever", "SA_y_2_year", "SA_y_1_year", "SA_y_baseline_year")
-table1_SA = CreateTableOne(data =dataset, vars = SA_variables ,factorVars = SA_variables,  strata = "race_black", addOverall = T)
-table1_SA_print = print(table1_SA, quote = FALSE, noSpaces = TRUE, printToggle = FALSE, missing = T)
-table1_SA_print
+df_eur = data.frame(dataset[dataset$genetic_afr == 0, c("src_subject_id","suicide_PRSice_Pt0_05", "genetic_afr")])
+df_afr = data.frame(dataset[dataset$genetic_afr == 1, c("src_subject_id","suicide_PRSice_Pt0_05", "genetic_afr")])
 
-write.csv(as.data.frame(table1_SA_print), "tables/table1_SA.csv",na = "" )
+df_eur =  cbind(df_eur, Pedicted_SA_probability = predict(mod_meta_2$modEUR ,type = "response"))
+df_afr =  cbind(df_afr, Pedicted_SA_probability = predict(mod_meta_2$modAFR ,type = "response"))
+df = rbind.fill(df_eur,df_afr)
 
 
-setDT(dataset)
-dataset[,table(SA_y_baseline_year,SA_y_1_year, useNA = "ifany")]
-dataset[,table(SA_y_baseline_year,SA_y_2_year, useNA = "ifany")]
-dataset[,table(SA_y_1_year,SA_y_2_year, useNA = "ifany")]
+df$ancestry = factor(df$genetic_afr, labels = c("European", "African"))
+p2 <- ggplot(data=df, aes(x=suicide_PRSice_Pt0_05, y=Pedicted_SA_probability, color=ancestry)) +
+  geom_point(alpha = 0.25) + scale_x_continuous(limits = c(-5, 5) + scale_y_continuous(limits = c(0, 1))) +
+  geom_smooth(method = "lm", se = T) + geom_rug() + 
+  labs(x="Standardized PRS-SA", y = "Probability of suicide attempt") +
+  facet_grid(cols = vars(ancestry)) + 
+  theme(legend.position="none")
+p2
+ggsave(filename = "paper/plots/model2_facet.tiff", plot = p2, width = 6, height = 4, device='tiff', dpi=700, compression = "lzw")
+
+
 
 
 

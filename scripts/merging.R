@@ -62,7 +62,7 @@ suicide_wide = reshape(as.data.frame(suicide_set), direction = "wide", idvar = c
 suicide_wide$SA_y_ever = apply(suicide_wide[,grep("SA_y", colnames(suicide_wide))], 1, 
                                function(r){ any(r == 1)*1 })
 
-# select only kids that have SA ever
+# select only kids that have value in SA ever
 suicide_wide = suicide_wide[!is.na(suicide_wide$SA_y_ever), c("src_subject_id", "sex", "SA_y_ever", "SA_y_2_year", "SA_y_1_year", "SA_y_baseline_year")]
 
 dataset_wide = merge(dataset_wide,suicide_wide)
