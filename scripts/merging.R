@@ -16,9 +16,6 @@ suicide_set <- read_csv("outputs/suicide_set.csv")
 
 
 ###### merge ######
-# fix in release 4.0
-site$sex[site$src_subject_id == "NDAR_INV3Z5E0931"] = "F"
-
 
 # merge demo from 1&2 with site
 dataset = merge(demographics_long[demographics_long$eventname %in% c("1_year_follow_up_y_arm_1", "2_year_follow_up_y_arm_1"),], site, all = T)
