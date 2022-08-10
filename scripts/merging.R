@@ -37,16 +37,11 @@ dataset_wide[,c("sex_br_1_year","sex_br_2_year")] = NULL
 dataset_baseline = merge(demographics_baseline, family_history_items)
 dataset_baseline = merge(dataset_baseline, family[,c("src_subject_id", "sex", "rel_family_id")] )
 
-dataset_baseline$sex[dataset_baseline$src_subject_id == "NDAR_INV3Z5E0931"] = "F"
-dataset_baseline$sex_br[dataset_baseline$src_subject_id == "NDAR_INV3Z5E0931"] = 1
-
 dataset_wide = merge(dataset_baseline, dataset_wide)
 dataset_wide = merge(dataset_wide, genetic )
 
 
 ###### suicide ######
-# fix sex in 4.0
-suicide_set$sex[suicide_set$src_subject_id == "NDAR_INV3Z5E0931"] = "F"
 
 # create SA across 3 timepoints 
 suicide_set$timepoint = regmatches(suicide_set$eventname, regexpr(".*_year", suicide_set$eventname))
